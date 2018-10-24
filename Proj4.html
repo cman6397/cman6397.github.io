@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    border: 1px solid black;
+    margin-top: 50px;
+    margin-bottom: 100px;
+    margin-right: 150px;
+    margin-left: 80px;
+    background-color: white;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+}
+
+body {
+    background-color: lightblue;
+}
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+<body>
+<div>
+  <title> Chess Game Prediction Algorithm </title>
+ </head>
+<center> <h1> Chess Game Prediction Algorithm </h1> </center>
+
+<p> As an online chess player, I have seen many threads discussing the possibility of a normal player beating an elite player.  In one particular discussion, hundreds of players weighed in on what they thought the odds were of a novice player (1200 Elo) beating a grandmaster (2500 Elo).    Given that chess is a highly deterministic game, the odds of a lower rated player beating a much higher rated player are often very low.  When rating difference is large enough, it becomes infeasible to test odds through head to head chess play because of the large number of games required to generate an accurate result. To attempt a solution to this problem, I modeled player skill using a loss per move metric and simulated games to calculate odds.    </p>
+
+<b> Modeling Players: </b>
+<p> As a metric for quantifying player skill, I chose to use loss per move.  In chess, loss per move is a quantity that measures how much advantage a player concedes when making a move. This value is calculated by comparing the score differential between the best possible move in a chess position and the move chosen by the player. Although it is impossible to always know the best move in a chess game, computer chess engines have gotten strong enough to be used as a benchmark for loss per move calculations.  By comparing a human player’s moves to a chess engine’s moves, one can develop a probability density function for loss per move values of a given player.  These density functions model the quality and consistency of a player’s moves. </p>
+<p> Player skill often varies at different points in a game.  Some players are stronger in the opening phase, some in the middle game, and others in the endgame. Furthermore, time plays a big role in move quality. At later points in the game when time is low, players are more likely to make mistakes or move without thinking deeply.  In light of these facts, I decided to create different loss distributions for each ten-move interval of game play.  I started with the opening phase (0-10 moves) and stopped evaluating intervals at move 60.  I created a final interval for all moves after 60.  When simulating games, different distributions are sampled at different stages of the game.</p>
+<p>Below is a histogram showing loss per move for Grandmaster Hikaru Nakamura (2800 Elo) over moves 10-20 in 300 blitz games.  Loss units are in centipawns (100 centipawns=1 pawn).  </p>
+<br>
+<img src ="images/Proj4/p4im1.PNG" style = "width:50%;">
+<br>
+<p>Note that negative loss values are theoretically impossible but occurred due to small changes in engine evaluation after moves were played.  These negative loss values reflect user moves that were superior to the engine's top choice. </p>
+
+<b>The Data:</b>
+<p> I chose to create probability distributions for loss per move using chess.com 5-minute chess game data.  I chose this particular data source for the following reasons: 
+<ul>
+<li> The 5 minute blitz chess game is one of the most common forms of online chess play and there are millions of games at all different levels available to analyze. </li>
+<li> 5-minute games are almost as deterministic but much less deep than standard games since less time can be spent exploring the game tree.  This makes the bench mark engine stronger relative to the play since time does not effect the engine nearly as much as it effects the player. The stronger the bench mark engine is relative to the player the more useful its evaluations are. </li>
+<li> I have played many 5-minute games and wanted to compare my playing ability with top players. </li> 
+</ul> </p>
+<b>An Amateur Player vs a World Class Player: </b>
+<p>I collected 300 games played by myself and 300 games played by Grand Master Hikaru Nakamura on chess.com.  Games were stored in pgn text files. I used the python chess library configured with the Stockfish 8 chess engine to go through each game one move at a time and calculate loss per move.  I cut the engine’s depth search to 15 to reduce run time.  Depth 15 is equivalent to about 2600 level play in standard chess and much higher in blitz chess. Given that I am rated 2100 in blitz and Hikaru Nakamura is rated 2800, I felt Stockfish depth 15 was a sufficient benchmark.    </p>
+<p>I stored loss per move values for each player at all the game intervals described above.  Most of the loss histograms had high frequencies of low loss values with scattered blunders to the right of the distribution. My loss histogram for opening moves is a good example:
+</p>
+<br>
+<img src ="images/Proj4/p4im2.PNG" class = "center">
+<br>
+<p> The next step of the process was fitting a continuous probability distribution to the loss data.  I chose to use a Gumbel distribution with right skew since it seemed to fit the data well.  I modeled moves between -100 and 200 loss using the Gumbel distribution and modeled the blunders (>200) using a normal distribution.  I modeled these two types of moves separately since it is difficult to get accurate tails when so many large outliers are present. Below is the Gumbel fit for my opening moves.</p>
+<br>
+<img src ="images/Proj4/p4im3.PNG" class = "center">
+<br>
+<p>After creating Gumbel and normal distributions for each player at every game interval, the game simulations began.  To simulate a game, moves were drawn randomly from each player’s distributions at appropriate game stages until one player gained a “winning advantage”.  Moves were sampled from the blunder normal distribution at the player’s blunder percentage for the current move interval and from the Gumbel distribution otherwise.  Defining a winning advantage is somewhat subjective, but I chose to define it as a 10 pawn or 1000 centipawn advantage for one player.  After simulating 1000000 games between GM Hikaru Nakamura and myself, I estimated my odds of winning to be 0.03%, which seems reasonable based on the rating differences.  </p>
+<b> Prediction Accuracy: </b>
+<p> To check accuracy, I calculated some odds for players who have played each other many times.  The results for selected players are listed below: </p>
+<br>
+<img src ="images/Proj4/p4im4.PNG" class = "center">
+<br>
+<p> Although these predictions are not exact, the approach to modeling players captures enough information to come up with reasonable odds.  The limitation of this type of analysis is the time it takes to compute loss distributions and the fact that you are inevitably comparing player move quality in different game states.  In a perfect world, all players would have thousands of moves from the same set of game states allowing for perfect relative skill analysis.  Since this is not possible, the best we can do is classify game states and evaluate each cluster of similar game states separately.  I broke up my game states by move number but in the future I would like to take into account features such as game time remaining, position centipawn score, position sharpness, and king safety.    </p>
+<br>
+
+</div>
+</body>
+</html> 

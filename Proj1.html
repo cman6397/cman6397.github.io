@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> Factor Volatility Timing Strategy </title>
+ </head>
+
+<body>
+<center> <h1> Factor Volatility Timing Strategy </h1> </center>
+<b> Overview: </b>
+<p> In the summer of 2016, I worked as a quantitative analyst intern for a hedge fund.  My firm used historical financial data to test various investment ideas and develop strategies.  As a quantitative analyst, my work consisted of testing out potential investment ideas and reporting to my firm on performance.  A project I spent a lot of time on was a strategy to adjust investments based on estimated levels of market risk.  Below I describe some important aspects of the strategy and outline some possible implementations. </p>
+<b> Factors: </b>
+<p>A Factor is a set of stocks that share some common quality. Given a set of stocks and a set of features for each stock, stocks can be classified into predifined groups that capture general qualities about the stock.  Some examples of factors are Momentum, Value, Beta, Size, Earnings to Price Ratio, Book to Price Ratio, Dividend Yield and Return on Investment.  Working with factors is a great tool for trying to understand the relationship between different types of stocks in the market. </p>  
+<p>The momentum factor classifies stocks by their price trend.  Stocks that are trending upwards have high momentum while stocks trending downwards have low momentum.  The graph below shows the relative performance between high and low momentum stocks from 2000 to 2016 in the Russell 1000.  High and low momentum stocks are defined as the top and bottom 20% of the Russell 1000 ordered by the magnitude of their price trend over the past 12 months.  </p>  
+<br>
+<img src ="images/Proj1/im1.PNG"/>
+<br>
+<b> Hypothesis: </b>
+<p> Risk sensitive factors will respond to changes in the variance of returns (idea is change in variance=change in investment risk). </p>
+<p>The goal of my project was to find a relationship between perceived risk and performance of certain factors.  The idea behind the experiment is that investors will respond to changes in perceived risk in a predictable way that can be used to estimate short term future performance for particular types of stocks.  The primary metric used for perceived risk was return variance.        </p>  
+<b> The Procedure </b>
+<p> Construct a metric that represents current return variance of a factor and check for correlation between returns and current variance.</p>  
+
+<b> GARCH Model for Conditional Variance: </b>
+<br>
+<img src ="images/Proj1/im2.PNG"/>
+<p>The generalized autoregressive conditional heteroskedasticity model estimates the current variance of returns as a function of the residual return and estimated variance from the previous time period.  The GARCH model is similar to an exponentially weighted moving average function in that it weighs information from previous time periods at an exponentially diminishing rate. The coefficients Alpha, Beta, and Omega are fit to time series return data using Maximum Likelihood estimation.   </p>
+<p>I felt the GARCH model was a good choice for measuring conditional variance due to its simple assumptions and its objective fitting process.  I created a Matlab program to take a time series of return data and return a time series of GARCH predicted variance terms.  This involved recalculating Alpha, Beta, and Omega weights for each return value in the time series.  </p>   
+<p>Below is the GARCH conditional variance time series overlaying the Momentum return time series. </p>
+<br>
+<img src ="images/Proj1/im3.PNG"/>
+<br>
+<b> Findings: </b>
+<p> After generating a GARCH conditional variance time series for the daily returns of 16 factors from 2000 to 2016, I began checking for relationships between variance levels and returns.  I found relatively large variance/return correlations for the factors Momentum, Beta, and Value.  Beta and Value showed a positive correlation between variance and returns while Momentum showed a negative correlation.  I theorized this was because people were attracted to Value stocks when perceived risk was high and growth stocks when perceived risk was low.  The changes in demand for these types of stocks at different variance levels drove price changes that were reflected in factor performance. </p>
+<p> Below is a visual that demonstrates the connection between variance and returns for the Momentum factor.  I sorted the daily returns for momentum by variance levels and then graphed the results.  I grouped variance levels into 37 bins of 100 data points and computed the average return over each bin.  </p>
+<br>
+<img src ="images/Proj1/im4.PNG"/>
+<p> As you can see, the Momentum strategy tends to perform poorly when return variance levels are high.  Bins 29-37 representing the 79th – 100th percentile of variance levels all demonstrate negative average returns over each collection of 100 daily return points.  </p>
+<b> Creating a Strategy: </b>
+<p> To take advantage of the predictive relationship between variance levels and factor performance for Momentum, Beta, and Value, I developed a Factor timing strategy to change factor exposure depending on current variance levels.  At every point in time, the strategy would fit the GARCH model to historical data and calculate the current variance level.  Variance levels were than z-scored relative to past GARCH variance levels to get a relative variance level.  At this point in the algorithm, a z score threshold was used to decide which factor the strategy would shift into.  The following days returns for whichever factor the strategy had chosen the previous day would then be added to the strategies performance.  To find a good threshold point, I simulated hundreds of strategies using different threshold points and examined the strategy performances.  I was amazed by how effective and robust this type of strategy seemed to be. </p>
+<p> Below is a strategy that alternates between Momentum and Value investing depending on relative variance levels at a threshold z score of 0.3.  The strategy is able to switch between Value and Momentum factors to catch a lot of upside and little downside of each individual factor.   </p>
+<br>
+<img src ="images/Proj1/im5.PNG"/>
+<p>Here is a graph depicting Hybrid Strategy Sharpe ratios at various cutoffs.   Every Sharpe ratio between a threshold of 0.16 and 3.5 corresponds to a strategy with a higher Sharpe ratio than an equally weighted Momentum Value strategy.  This means that many versions of this strategy worked very well from 2000 to 2016.  </p>
+<br>
+<img src ="images/Proj1/im6.PNG"/>
+<br>
+<b> Strategy Application </b> 
+<p> Due to the promising results of Factor timing using GARCH variance, my firm asked me to set up programs for them to track variance levels for various factors.  We then set up a robust version of the hybrid strategy to cast a vote in my firm’s master strategy on what investment action to take.    </p>
+<b> Additional Ideas: </b>
+<p> There are many possible variations of the outlined strategy above.  One idea I would like to test out is creating a custom factor designed to pick up the most risk sensitive stocks in the market.  This factor could be the intersection of several risk sensitive factors or defined by new criteria entirely.  I would then use risk metrics to create a time series of risk levels and test long/short timing strategies. </p>
+<p> It would also be useful to test out other risk proxies besides return variance.  It is likely that using several risk proxies can create a better risk proxy than any individual metric. </p>
+  
+</body>
+  
+<br>
+<hr>
+  
+</html> 

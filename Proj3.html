@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    border: 1px solid black;
+    margin-top: 50px;
+    margin-bottom: 100px;
+    margin-right: 150px;
+    margin-left: 80px;
+    background-color: white;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+}
+
+body {
+    background-color: lightblue;
+}
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+<body>
+<div>
+  <title> Neural Network Handwritten Letter Classification </title>
+ </head>
+<body>
+<center> <h1> Neural Network Handwritten Letter Classification </h1> </center>
+<b> Overview: </b>
+<p> I created a neural network from scratch in a Jupyter notebook to identify handwritten letters.  The neural network architecture is a shallow fully connected network that consists of an input layer, a hidden layer, and an output layer.  The network is trained using stochastic gradient descent.  Single networks reached an accuracy of 87% while ensembles of neural networks reached an accuracy of 92%.  </p>
+
+<b> The Data: </b>
+<p> The dataset used for letter classification consists of 126,000 images of handwritten letters.  The images are 28x28 pixels with pixel values between 0 and 1 (grayscale).  The images are flattened into length 784 feature vectors and stacked to make a 126,000 x 784 design matrix.  Each sample is normalized using the L2 norm of the feature values.  Below is a figure showing what a preproccessed sample looks like.  In the figure, black represents a value of 0 and white represents a value of 1. The label for the figure is 18, which corresponds to the letter “S”. </p>
+
+<br>
+<img src ="images/Proj3/p3im1.PNG"/>
+<br>
+
+<b>Neural Network Structure:</b>
+<p>The neural network consists of three layers.  The input layer is made up of 785 nodes.  The first 784 nodes correspond to pixel values in the image and the last node is a bias term with fixed value 1.  The output layer is made up of 26 nodes which indicate the probability of the sample being in each class.  The hidden layer is fully connected to the input and output layers and consists of an arbitrary number of nodes with an added bias node. </p>
+<p>The weights between the input node and the hidden node are represented by a matrix denoted w1. Values at row x, and column y of w1 denote the weight that connects input node x with hidden node y.  Matrix w2 represents the weights between the hidden layer and the output layer.  Values at row y and column z of w2 denote the weight that connects hidden node y with output node z.</p> 
+<br>
+<img src ="images/Proj3/p3im3.PNG"/>
+<br>
+<p>The tanh activation function is applied to the nodes in the hidden layer.  The sigmoid activation function is applied to the nodes in the output layer. The loss function incentivises low output node values for incorrect labels and a high output node value for the correct label.  Below is the loss function. </p>
+<br>
+<img src ="images/Proj3/p3im2.PNG"/>
+<br>
+
+<b> Calculating The Gradient: </b>
+<p>In order to train the neural network using gradient descent algorithms, a gradient for the neural network must be calculated using backpropogation.  Below is an image showing the steps I took to find the partial derivatives of the loss function with respect to weight matrices w1 and w2. The boxed solutions are the simplified partial derivatives for w1 and w2.    </p>
+<br>
+<img src ="images/Proj3/p3im4.PNG"/>
+<br>
+<b> Code: </b>
+<p> Here is the code: </p>
+<a href="Neural_Net_Code.html"> Jupyter Notebook Neural Network </a>
+<p>
+The neural network was created in python using a Jupyter notebook.  The most important part of the program is the neural network class, which is used to create, train, and test neural networks.  The most difficult part of the program was calculating the gradient correctly. Discovering the numpy outer product function and dot product function saved me a lot of time.  Checking certain values of the gradient numerically to verify my functions was useful for debugging.     
+
+<p>Using 100 neurons in the hidden layer, I was able to train a neural network up to an 87% accuracy prediction rate on the validation set.  To achieve this, I ran 15 passes of gradient descent over the first 80,000 samples with an initial learning rate value of 0.1.  Below is a graph of validation set prediction accuracy as a function of the number of iterations of gradient descent.  I computed validation set accuracy once every hundred samples to show total model improvement over the first pass of gradient descent.  Tweaking the decay rate of the learning parameter “alpha” in the code changes how quickly the model converges to a local minimum.  </p>
+<br>
+<img src ="images/Proj3/p3im5.PNG"/>
+<br>
+<p>To improve prediction accuracy, I created an ensemble of 30 neural networks to vote on classification of a sample.  To increase the variance of the neural networks in the ensemble, I utilized bagging and different numbers of hidden layers.  Variance is also introduced into the ensemble through the random initialization of the weights in w1 and w2.  The ensemble of networks achieved a prediction rate of 92%, which was a modest improvement from 87%.  The fact that each neural network in the ensemble had close to an 85% prediction rate but the ensemble only performed at a 92% prediction rate suggests that the neural networks in the ensemble were still highly correlated with each other.  Next I would like to test random feature subset selection on input images to further decorrelate the models.  </p>
+<br>
+</body>
+</html> 

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> Momentum ETF Rotation Strategy </title>
+ </head>
+<body>
+<center> <h1> Momentum ETF Rotation Strategy </h1> </center>
+<b> Background: </b>
+<p> In 2015, I worked for a wealth advisory firm as an analyst and programmer.  I initially worked on improving company infrastructure by automating processes.  I was then asked to perform a backtest on a momentum strategy.  </p>
+<p>The momentum strategy I was asked to evaluate was a strategy which ranked about 100 ETFs by price trend and selected the top 10 highest ranking ETFs as holdings.  The goal of the strategy was to continously rebalance into the highest performing ETFs to catch some of the positive price trend.  The strategy assumes that past price trends are a predictor of future returns.  The strategy was tested by simulating the decision making process on historical data. I initally evaluated the relationship between 3 month lagged time periods and then developed a generalized method for simulating strategies across many different time lags.  </p>
+<b> Approach: </b>
+<p> I first created a program to scrape yahoo finance historical ETF data and pull it back into Excel.  This allowed me to quickly pull historical prices for any ticker at any time period.  I then wrote a backtesting program to simulate the decision making process of the strategy given lag values as hyperparameters.  I chose variable ranges for lag values and ran the backtest over the ranges to generate three dimensional meshes of performance, hit rates, and autocrelations over the input variables.  I used Matlab to generate the surfaces.</p>
+
+<p>Below is a two-dimensional cross-section of the first three-dimensional performance graph I generated.  Lookback period represents the number of days evaluated for price trend and hold period represents how long high momentum ETFs were held before momentum was reevaluated.  Performance is defined by percent returns over the period tested.  </p>
+<br>
+<img src ="images/Proj2/p2im1.PNG"/>
+<br>
+
+<p> I did a lot of experimentation with metrics for evaluating price trend.  Absolute percent returns, exponentially weighted moving averages, sharpe ratios and various other metrics were used to quantify trends.  Below is a graph of momentum strategies generated on a set of about 30 ETFs from 2007 to 2015 using sharpe ratios as the trend algorithm.  From the graph, it is clear that the best parameters for momentum algorithms over this period were look back periods of around 70 days with short hold periods.   </p>
+<br>
+<img src ="images/Proj2/p2im2.PNG"/>
+<br>
+
+<hr>
+</body>
+</html> 
+
+<b> Discussion: </b>
+<p> While the relationship between past and present in financial markets is always disputable, it is interesting to see that a strategy relying on this assumption generated significant outperformance over certain hyperparameter ranges.  Whether or not this result is significant is a different matter.  The market structure that produced this outcome is likely time variable and therefore regions of outperformance will likely vary with time. On the contrary, the structure might be a function of behavioral biases in human investors buying into rising securities. Distinguishing correlation verses causation in this particular persuit is an impossible task and any theory from total randomness to constant, underlying structure could be correct. </p>
+
+<br>
+<hr>
+</body>
+</html> 
