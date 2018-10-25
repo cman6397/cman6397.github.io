@@ -18,13 +18,12 @@
 }
 
 iframe {
-    width: 500px;
-    height: 300px;
-    margin: 0 auto;
+    width:45%;
+    height: 20vw;
+    margin: 1%;
     background-color: #777;
-    display:block;
+    display:inline-block;
 }
-
 
 body {
     background-color: lightblue;
@@ -43,6 +42,11 @@ img {
     margin:10px;
     background-color: #FFFFFF;
 }
+.center_block {
+    float:left;
+    width:100%;
+    position:relative;
+}
 h2 {
     margin-bottom: 0px;
     font-size:20px;
@@ -53,6 +57,10 @@ h3 {
     margin-top:0px;
     font-size:18px;
     font-weight:600;
+}
+.clearfix::after {
+  clear: both;
+  display: block;
 }
 
 </style>
@@ -122,10 +130,12 @@ h3 {
 <hr>
 <h3> Music </h3> 
 <div class = "chunk_container">
-    <p> I love all kinds of music and play a couple different instruments.  I have played piano since I was young and continue to practice and learn new pieces to this day.  My favorite composers are Beethoven, Rachmaninoff, and Chopin.  I am also a fan of a lot of modern music and have learned a couple electronic songs and rock songs. Here is a clip of me playing the second movement of Beethoven's Moonlight Sonata. </p>
-    <iframe
-    src="https://www.youtube.com/embed/e8xpUJc1088">
-    </iframe>
+    <p> I love all kinds of music and play a couple different instruments.  I have played piano since I was young and continue to practice and learn new pieces to this day.  My favorite composers are Beethoven, Rachmaninoff, and Chopin.  I am also a fan of a lot of modern music and have learned a couple electronic songs and rock songs. Here are clips of me playing the second movement of Beethoven's Moonlight Sonata and Rachmaninoff's Prelude in C# Minor. </p>
+    <div class = "center_block" >
+        <iframe src="https://www.youtube.com/embed/e8xpUJc1088" style = "float:left; margin-left:3%;"> </iframe>
+        <iframe src="https://www.youtube.com/embed/if61BhdxSNI" style = "float:right; margin-right:3%"> </iframe>
+    </div>
+    <div style="clear: both"></div>
 </div>
 </html> 
 
